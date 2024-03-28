@@ -2,11 +2,12 @@
 	Author: Cleiton Viana
 */
 
-package main 
+package main
 
-import "fmt"
-
+import (
+	"github.com/cleitonSilvaViana/social-go/api/router"
+)
 
 func main() {
-	fmt.Println("HIIII")
+	router.StartRouter(":5000")
 }
