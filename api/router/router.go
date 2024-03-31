@@ -2,20 +2,16 @@
 package router
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/cleitonSilvaViana/social-go/api/router/routes"
-	"github.com/cleitonSilvaViana/social-go/internal/config"
-	"github.com/gin-gonic/gin"
 )
 
-// StartRouter init the process of routing in the application
-func StartRouter(APIPost string) {
-	err := config.GetConfig()
-	if err != nil {
-		panic(err)
+func InitRouter(apiPort string) {
+	mux := http.NewServeMux()
+	for _, route := range routes.UsersRoutes {
+		mux.HandleFunc(route.URI, route.Handler)
 	}
-
-
-	var router *gin.Engine = gin.Default()
-	routes.Users(router)
-	router.Run(APIPost)
+	log.Fatal(http.ListenAndServe(apiPort, mux))
 }

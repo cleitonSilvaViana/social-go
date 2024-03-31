@@ -9,5 +9,5 @@ import (
 )
 
 func main() {
-	router.StartRouter(":5000")
+	router.InitRouter(":5000")
 }

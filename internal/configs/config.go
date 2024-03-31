@@ -1,5 +1,5 @@
 // package config contains the methods with extract values of enverioment variables
-package config
+package configs
 
 import (
 	"os"
@@ -9,10 +9,15 @@ import (
 )
 
 type envs struct {
-	SGBD                   string `env:"SGBD,required"`
-	DATABASE_NAME          string `env:"DATABASE_NAME"`
-	DATABASE_USER_NAME     string `env:"DATABASE_USER"`
-	DATABASE_USER_PASSWORD string `env:"DATABASE_PASSWORD"`
+	SGBD_MYSQL                   string `env:"SGBD_MYSQL,required"`
+	MYSQL_DATABASE          string `env:"MYSQL_DATABASE"`
+	MYSQL_USER_NAME     string `env:"MYSQL_USER_NAME"`
+	MYSQL_USER_PASSWORD string `env:"MYSQL_USER_PASSWORD"`
+
+	SGBD_MONGODB                   string `env:"SGBD_MONGO,required"`
+	MONGO_DATABASE          string `env:"MONGO_DATABASE"`
+	MONGO_USER_NAME     string `env:"MONGO_USER_NAME"`
+	MONGO_USER_PASSWORD string `env:"MONGO_USER_PASSWORD"`
 
 	API_PORT string `env:"API_PORT,required"`
 }

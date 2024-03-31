@@ -1,65 +1,61 @@
-// package routes contains the routes of application configurated
 package routes
 
-import (
-	"net/http"
-)
+import "net/http"
 
-
-var UsersRoutes = [...]Route{
+var GroupRoutes = [...]Route{
 	{
-		URI:            http.MethodPost + "/users",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
-		AuthIsrequired: false,
-	},
-	{
-		URI:            http.MethodGet + "/users",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
-		AuthIsrequired: false,
-	},
-	{
-		URI:            http.MethodGet + "/users/{user-uid}",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
-		AuthIsrequired: false,
-	},
-	{
-		URI:            http.MethodPost + "/{user-uid}/followers",
+		URI:            http.MethodGet + "/groups",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodPost + "/{user-id}/following-me",
+		URI:            http.MethodGet + "/groups/{group-id}",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
-
 	{
-		URI:            http.MethodPost + "/users/{user-uid}/invite",
+		// create group
+		URI:            http.MethodPost + "/groups",
+		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		AuthIsrequired: true,
+	},
+	{ // enter group
+		URI:            http.MethodPost + "/groups/{groups-id}",
+		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		AuthIsrequired: true,
+	},
+	{
+		URI:            http.MethodPost + "/groups/{group-id}/exit",
+		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		AuthIsrequired: true,
+	},
+	{
+		URI:            http.MethodPost + "/groups/{user-uid}/invite",
+		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		AuthIsrequired: true,
+	},
+	{
+		URI:            http.MethodPost + "/groups/{user-uid}/block",
+		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		AuthIsrequired: true,
+	},
+	{
+		URI:            http.MethodPost + "/groups/{user-uid}/kickout",
+		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		AuthIsrequired: true,
+	},
+	{
+		URI:            http.MethodPost + "/groups/report",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 		{
-		URI:            http.MethodPost + "/users/{user-uid}/block",
+		URI:            http.MethodPatch + "/groups/{group-id}",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodPatch + "/users/{user-id}",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
-		AuthIsrequired: true,
-	},
-	{
-		URI:            http.MethodPost + "/users/{user-uid}/update-password",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
-		AuthIsrequired: true,
-	},
-	{
-		URI:            http.MethodPost + "/users/{user-uid}/disable",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
-		AuthIsrequired: true,
-	},
-	{
-		URI:            http.MethodDelete + "/users/{user-uid}",
+		URI:            http.MethodDelete + "/groups/{group-id}",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},

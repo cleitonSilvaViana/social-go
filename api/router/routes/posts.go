@@ -1,65 +1,60 @@
-// package routes contains the routes of application configurated
 package routes
 
-import (
-	"net/http"
-)
+import "net/http"
 
-
-var UsersRoutes = [...]Route{
+var PostsRoutes = [...]Route{
 	{
-		URI:            http.MethodPost + "/users",
+		URI:            http.MethodGet + "/posts",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: false,
 	},
 	{
-		URI:            http.MethodGet + "/users",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
-		AuthIsrequired: false,
-	},
-	{
-		URI:            http.MethodGet + "/users/{user-uid}",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
-		AuthIsrequired: false,
-	},
-	{
-		URI:            http.MethodPost + "/{user-uid}/followers",
+		URI:            http.MethodGet + "/posts/{post-id}",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodPost + "/{user-id}/following-me",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
-		AuthIsrequired: true,
-	},
-
-	{
-		URI:            http.MethodPost + "/users/{user-uid}/invite",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
-		AuthIsrequired: true,
-	},
-		{
-		URI:            http.MethodPost + "/users/{user-uid}/block",
+		URI:            http.MethodPost + "/posts",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodPatch + "/users/{user-id}",
+		URI:            http.MethodPost + "/posts/{post-id}/comment",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodPost + "/users/{user-uid}/update-password",
+		URI:            http.MethodPatch + "/posts/{post-id}/comment",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodPost + "/users/{user-uid}/disable",
+		URI:            http.MethodDelete + "/posts/{post-id}/comment",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodDelete + "/users/{user-uid}",
+		URI:            http.MethodPost + "/posts/{post-id}/react",
+		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		AuthIsrequired: true,
+	},
+	{
+		URI:            http.MethodPost + "/posts/{post-id}/share",
+		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		AuthIsrequired: true,
+	},
+	{
+		URI:            http.MethodPost + "/posts/{post-id}/report",
+		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		AuthIsrequired: true,
+	},
+	{
+		URI:            http.MethodPatch + "/posts/{post-id}",
+		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		AuthIsrequired: true,
+	},
+	{
+		URI:            http.MethodDelete + "/posts/{post-id}",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
