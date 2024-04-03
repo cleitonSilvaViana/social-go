@@ -1,12 +1,18 @@
 /* CREATE DATABASE */
+CREATE DATABASE social;
+
+
+USE social;
+/*
+https://countrycode.org/
+*/
 
 /* logic model: */
 CREATE TABLE Country (
     ID INT AUTO_INCREMENT,
     name VARCHAR(20) NOT NULL UNIQUE,
-    sigla VARCHAR(3) NOT NULL UNIQUE,
-    code INT NOT NULL UNIQUE,
-    language VARCHAR(20) NOT NULL,
+    country_code VARCHAR(9) NOT NULL UNIQUE,
+    iso_code CHAR(2) NOT NULL UNIQUE,
 
     PRIMARY KEY (ID)
 );
@@ -29,15 +35,26 @@ CREATE TABLE City (
     FOREIGN KEY (stateID) REFERENCES State(ID)
 );
 
+CREATE TABLE Address (
+    ID INT NOT NULL AUTO_INCREMENT,
+    cityID INT NOT NULL,
+    public_place VARCHAR(50), /* logradouro */
+    number INT NOT NULL, /* número do imóvel */
+    ZIP_CODE INT NOT NULL, /* CEP */
+
+    PRIMARY KEY(ID),
+    FOREIGN KEY (cityID) REFERENCES City(ID)
+);
+
 CREATE TABLE Contact (
     ID INT AUTO_INCREMENT,
-    email VARCHAR(50) NOT NULL,
-    phone CHAR(32) NOT NULL,
+    email_personal VARCHAR(50) NOT NULL,
+    email_work VARCHAR(50) NOT NULL,
+    phone CHAR(13) NOT NULL,
     site VARCHAR(100),
 
     PRIMARY KEY(ID)
 );
-
 
 
 CREATE TABLE User (
@@ -45,7 +62,7 @@ CREATE TABLE User (
     nick VARCHAR(20) UNIQUE NOT NULL,
     img_perfil BLOB,
     First_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50),
     gender VARCHAR(50),
     birth_date DATE NOT NULL,
     createdAt DATE,
@@ -58,37 +75,15 @@ CREATE TABLE User (
 );
 
 CREATE TABLE Company (
-    uid CHAR(32),
+    uid CHAR(32) NOT NULL,
     nick varchar(20) UNIQUE NOT NULL,
     img_perfil BLOB,
-    document VARCHAR(50),
-    slogan VARCHAR(100),
-    description TEXT NOT NULL,
-    fundation DATE,
-    public_place VARCHAR(50),
-    contactID INT,
-    cityID INT,
+    fundation DATE NOT NULL,
     createdAt DATE,
+    contactID INT,
+    AddressID INT,
 
     PRIMARY KEY (uid),
-    FOREIGN KEY(ContactID) REFERENCES Contact(ID)
-);
-
-/*****  FALTA ESTA TABELA ******/
-CREATE TABLE Group (
-    ID INT,
-    creatorID CHAR(32) NOT NULL,
-    description VARCHAR(50) NOT NULL,
-    name VARCHAR(50) NOT NULL,
-
-    PRIMARY KEY(ID),
-    FOREIGN KEY(creatorID) REFERENCES User(UID)
-);
-
-
-CREATE TABLE UserGroup (
-    userID CHAR(32) NOT NULL UNIQUE,
-    groupID INT NOT NULL UNIQUE,
-
-    CONSTRAINT PK_UserGroup PRIMARY KEY (userID, groupID)
+    FOREIGN KEY (ContactID) REFERENCES Contact(ID),
+    FOREIGN KEY (AddressID) REFERENCES Address(ID)
 );

@@ -21,18 +21,18 @@ var ProfileRoutes = [...]Route{
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodPost + "/report/profile-uid",
+		URI:            http.MethodPost + "/report/profile_id",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 
 	{
-		URI:            http.MethodPost + "/follow/profile-uid",
+		URI:            http.MethodPost + "/follow/profile_id",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodPost + "/unfollow/profile-uid",
+		URI:            http.MethodPost + "/unfollow/profile_id",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},

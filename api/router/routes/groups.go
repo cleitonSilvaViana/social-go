@@ -9,7 +9,7 @@ var GroupRoutes = [...]Route{
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodGet + "/groups/{group-id}",
+		URI:            http.MethodGet + "/groups/{group_id}",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
@@ -25,7 +25,7 @@ var GroupRoutes = [...]Route{
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodPost + "/groups/{group-id}/exit",
+		URI:            http.MethodPost + "/groups/{group_id}/exit",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
@@ -50,12 +50,12 @@ var GroupRoutes = [...]Route{
 		AuthIsrequired: true,
 	},
 		{
-		URI:            http.MethodPatch + "/groups/{group-id}",
+		URI:            http.MethodPatch + "/groups/{group_id}",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
 	{
-		URI:            http.MethodDelete + "/groups/{group-id}",
+		URI:            http.MethodDelete + "/groups/{group_id}",
 		Handler:        func(w http.ResponseWriter, r *http.Request) {},
 		AuthIsrequired: true,
 	},
