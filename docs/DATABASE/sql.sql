@@ -9,21 +9,19 @@ https://countrycode.org/
 
 /* logic model: */
 CREATE TABLE Country (
-    ID INT AUTO_INCREMENT,
+    CCA3 CHAR(3) NOT NULL UNIQUE,
     name VARCHAR(20) NOT NULL UNIQUE,
-    country_code VARCHAR(9) NOT NULL UNIQUE,
-    iso_code CHAR(2) NOT NULL UNIQUE,
 
-    PRIMARY KEY (ID)
+    PRIMARY KEY (cca3)
 );
 
 CREATE TABLE State (
     ID INT AUTO_INCREMENT,
     name VARCHAR(20) NOT NULL ,
-    countryID INT NOT NULL,
+    countryID CHAR(3) NOT NULL,
 
     PRIMARY KEY (ID),
-    FOREIGN KEY (CountryID) REFERENCES Country(ID)
+    FOREIGN KEY (CountryID) REFERENCES Country(CCA3)
 );
 
 CREATE TABLE City (
@@ -48,26 +46,25 @@ CREATE TABLE Address (
 
 CREATE TABLE Contact (
     ID INT AUTO_INCREMENT,
-    email_personal VARCHAR(50) NOT NULL,
-    email_work VARCHAR(50) NOT NULL,
-    phone CHAR(13) NOT NULL,
-    site VARCHAR(100),
+    email VARCHAR(50) NOT NULL UNIQUE,
+    phone CHAR(13) UNIQUE,
+    site VARCHAR(100) UNIQUE,
 
     PRIMARY KEY(ID)
 );
 
-
 CREATE TABLE User (
-    uid CHAR(32) ,
+    uid CHAR(36) ,
     nick VARCHAR(20) UNIQUE NOT NULL,
     img_perfil BLOB,
     First_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50),
     gender VARCHAR(50),
     birth_date DATE NOT NULL,
-    createdAt DATE,
-    contactID INT,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    contactID INT NOT NULL,
     cityID INT,
+    password VARCHAR(100) NOT NULL,
 
     PRIMARY KEY(uid),
     FOREIGN KEY(cityID) REFERENCES City(ID),
@@ -79,9 +76,9 @@ CREATE TABLE Company (
     nick varchar(20) UNIQUE NOT NULL,
     img_perfil BLOB,
     fundation DATE NOT NULL,
-    createdAt DATE,
-    contactID INT,
-    AddressID INT,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    contactID INT NOT NULL,
+    AddressID INT NOT NULL,
 
     PRIMARY KEY (uid),
     FOREIGN KEY (ContactID) REFERENCES Contact(ID),

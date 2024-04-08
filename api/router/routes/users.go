@@ -21,7 +21,7 @@ var UsersRoutes = [...]Route{
 	},
 	{
 		URI:            "GET /users/{user_id}",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		Handler:        handlers.SearchUser,
 		AuthIsrequired: false,
 	},
 	{
@@ -62,7 +62,7 @@ var UsersRoutes = [...]Route{
 	},
 	{
 		URI:            "DELETE /users/{user_id}",
-		Handler:        func(w http.ResponseWriter, r *http.Request) {},
+		Handler:        handlers.DeleteUser,
 		AuthIsrequired: true,
 	},
 }

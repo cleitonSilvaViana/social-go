@@ -40,3 +40,4 @@ func ValidateFields(err error) *validator.ValidationErrors {
 	}
 	return nil
 }
+
