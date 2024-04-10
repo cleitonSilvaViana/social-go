@@ -37,8 +37,8 @@ CREATE TABLE Address (
     ID INT NOT NULL AUTO_INCREMENT,
     cityID INT NOT NULL,
     public_place VARCHAR(50), /* logradouro */
-    number INT NOT NULL, /* número do imóvel */
-    ZIP_CODE INT NOT NULL, /* CEP */
+    number INT, /* número do imóvel */
+    ZIP_CODE INT, /* CEP */
 
     PRIMARY KEY(ID),
     FOREIGN KEY (cityID) REFERENCES City(ID)
@@ -53,34 +53,35 @@ CREATE TABLE Contact (
     PRIMARY KEY(ID)
 );
 
-CREATE TABLE User (
-    uid CHAR(36) ,
-    nick VARCHAR(20) UNIQUE NOT NULL,
+CREATE TABLE Profile {
+    uid char(36),
     img_perfil BLOB,
+    nick VARCHAR(20) UNIQUE NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    password VARCHAR(100) NOT NULL,
+    type char /* 1 - user, 0 - company */
+
+    contactID INT NOT NULL,
+    AddressID INT NOT NULL,
+
+    PRIMARY KEY(uid)
+    FOREIGN KEY(cityID) REFERENCES City(ID),
+    FOREIGN KEY(ContactID) REFERENCES Contact(ID)
+}
+
+CREATE TABLE User (
+    uid char(36) NOT NULL,
     First_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50),
     gender VARCHAR(50),
     birth_date DATE NOT NULL,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-    contactID INT NOT NULL,
-    cityID INT,
-    password VARCHAR(100) NOT NULL,
-
-    PRIMARY KEY(uid),
-    FOREIGN KEY(cityID) REFERENCES City(ID),
-    FOREIGN KEY(ContactID) REFERENCES Contact(ID)
+    
+    PRIMARY KEY(uid)
 );
 
 CREATE TABLE Company (
-    uid CHAR(32) NOT NULL,
-    nick varchar(20) UNIQUE NOT NULL,
-    img_perfil BLOB,
+    uid char(36) NOT NULL,
     fundation DATE NOT NULL,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-    contactID INT NOT NULL,
-    AddressID INT NOT NULL,
 
-    PRIMARY KEY (uid),
-    FOREIGN KEY (ContactID) REFERENCES Contact(ID),
-    FOREIGN KEY (AddressID) REFERENCES Address(ID)
+    PRIMARY KEY(uid)
 );

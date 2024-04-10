@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/cleitonSilvaViana/social-go/internal/database"
+	"github.com/cleitonSilvaViana/social-go/internal/entitie"
 	"github.com/cleitonSilvaViana/social-go/pkg/fail"
 )
 
@@ -19,7 +20,7 @@ func NewContactRepository() (*contactRepository, *fail.ResponseError) {
 	return &contactRepository{db}, nil
 }
 
-func (c *contactRepository) CreateNewUserContact(email string) (int, *fail.ResponseError) {
+func (c *contactRepository) RegisterNewProfileEmail(email string) (int, *fail.ResponseError) {
 	defer c.db.Close()
 
 	stmt, err := c.db.Prepare("INSERT INTO contact (email) VALUES (?)")
@@ -38,4 +39,27 @@ func (c *contactRepository) CreateNewUserContact(email string) (int, *fail.Respo
 	}
 
 	return int(contactID), nil
+}
+
+func (c *contactRepository) RegisterNewProfilePhone(phone string) (int, *fail.ResponseError) {
+	return 0, nil
+}
+
+// esboço...
+// vou receber um par chave/valor que será utilizado para realizar a query
+func (c *contactRepository) GetContact(param map[string]string) (*entitie.Contact, *fail.ResponseError) {
+	defer c.db.Close()
+
+	// basicamente, a chave do map passado como parâmetro deverá ser extritamente igual ao nome da coluna que será utilizada para filtrar os resultados
+	// já seu respectivo valor, será o parâmetro da consulta
+	row := c.db.QueryRow("SELECT id, email, phone FROM contact WHERE ? = ?", param /* chave */, param /* valor */ )
+	
+	var contact entitie.Contact
+
+	err := row.Scan(&contact)
+	if err != nil && err != sql.ErrNoRows{
+		return nil, fail.NewMySqlError(err)
+	}
+
+	return &contact, nil
 }

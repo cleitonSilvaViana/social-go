@@ -15,7 +15,7 @@ var (
 )
 
 func LoadEnvs() error {
-	err := godotenv.Load("../config/.env")
+	err := godotenv.Load("../.env")
 	if err != nil {
 		return err
 	}

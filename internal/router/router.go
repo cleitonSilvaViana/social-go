@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	middleware "github.com/cleitonSilvaViana/social-go/api/middlewares"
-	"github.com/cleitonSilvaViana/social-go/api/router/routes"
+	"github.com/cleitonSilvaViana/social-go/internal/router/middleware"
+	"github.com/cleitonSilvaViana/social-go/internal/router/routes"
 )
 
 // InitRouter realize the routing stater in application

@@ -9,7 +9,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/cleitonSilvaViana/social-go/api/router"
+	"github.com/cleitonSilvaViana/social-go/internal/router"
 	"github.com/cleitonSilvaViana/social-go/config"
 )
 

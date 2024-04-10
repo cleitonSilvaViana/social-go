@@ -6,27 +6,27 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"net/mail"
 	"strings"
 	"time"
 
-	"github.com/cleitonSilvaViana/social-go/internal/entities"
+	"github.com/cleitonSilvaViana/social-go/internal/entitie"
 	"github.com/cleitonSilvaViana/social-go/internal/repository"
-	"github.com/cleitonSilvaViana/social-go/internal/security"
 	"github.com/cleitonSilvaViana/social-go/pkg/fail"
 
 	"github.com/google/uuid"
 )
 
-type Data struct {
+type User struct {
 	UID       []byte    `json:"uid,omitempty"`
-	FirstName string    `json="firstName" validate="required,lte=3"`
-	BirthDate time.Time `json="birthDate" validate="required"`
+	FirstName string    `json:"firstName" validate:"required,lte=3"`
+	LastName  string    `json:"lastName" validate:"required,lte=3"`
+	BirthDate time.Time `json:"birthDate" validate:"required"`
+	Gender    string    `json:"gender"`
 }
 
-func (d *Data) validateFirstName() *fail.ResponseError {
-	d.FirstName = strings.Trim(d.FirstName, " ")
-	if len(d.FirstName) < 3 {
+func (u *User) validateFirstName() *fail.ResponseError {
+	u.FirstName = strings.Trim(u.FirstName, " ")
+	if len(u.FirstName) < 3 {
 		return &fail.ResponseError{
 			StatusCode: http.StatusBadRequest,
 			Message:    "seu nome não pode conter menos de 3 caracteres",
@@ -35,109 +35,68 @@ func (d *Data) validateFirstName() *fail.ResponseError {
 	return nil
 }
 
+func (u *User) ValidateLastName() *fail.ResponseError {
+	u.LastName = strings.Trim(u.LastName, " ")
+	if len(u.LastName) < 3 {
+		return &fail.ResponseError{
+			StatusCode: http.StatusBadRequest,
+			Message:    "seu sobrenome não pode conter menos de 3 caracteres",
+		}
+	}
+	return nil
+}
+
 // validateBirthDate return true case the user is older than 16 years old
-func (d *Data) validateBirthDate() bool {
+func (u *User) validateBirthDate() bool {
 	now := time.Now()
 	minimunAge := now.Add(-time.Duration(now.Year()))
-	return d.BirthDate.Before(minimunAge)
+	return u.BirthDate.Before(minimunAge)
 }
 
-type Address struct {
-	Country string `json="country'`
-	State   string `json="state"`
-	City    string `json="city"`
-}
-
-type Credentials struct {
-	Nick     string `json:"nick" validate:"required,lte=5"`
-	Password string `json:"password" validate:"required,lte=5"`
-}
-
-func (c *Credentials) validateNick() *fail.ResponseError {
-	c.Nick = strings.Trim(c.Nick, " ")
-	if len(c.Nick) < 5 {
+func (u *User) validateGender() *fail.ResponseError {
+	u.Gender = strings.Trim(u.Gender, " ")
+	if u.Gender == "" {
 		return &fail.ResponseError{
 			StatusCode: http.StatusBadRequest,
-			Message:    "o campo nick deve possuir ao menos 5 caracteres",
+			Message:    "o campo de genero deve estar preenchido",
 		}
 	}
 	return nil
-}
-
-func (c *Credentials) validatePassword() *fail.ResponseError {
-	c.Password = strings.Trim(c.Password, " ")
-	if len(c.Password) < 6 {
-		return &fail.ResponseError{
-			StatusCode: http.StatusBadRequest,
-			Message:    "a senha não pode possuir menos de 6 caracteres",
-		}
-	}
-	return nil
-}
-
-type Contact struct {
-	Phone string `json:"phone"`
-	Email string `json:"email" validate:"required,email"`
-}
-
-func (c *Contact) ValidateEmail() *fail.ResponseError {
-	c.Email = strings.Trim(c.Email, " ")
-	if c.Email == "" {
-		return &fail.ResponseError{
-			StatusCode: http.StatusBadRequest,
-			Message:    "o campo de email não pode estar vazio",
-		}
-	}
-
-	_, err := mail.ParseAddress(c.Email)
-	if err != nil {
-		return &fail.ResponseError{
-			StatusCode: http.StatusBadRequest,
-			Message:    "o email não está em um formato válido",
-		}
-	}
-	return nil
-}
-
-func (c *Contact) ValidatePhone() error {
-	return nil
-}
-
-type User struct {
-	Data
-	Address
-	Credentials
-	Contact
 }
 
 func (u *User) validade() *fail.ResponseError {
+	var errs []error
 
 	ok := u.validateBirthDate()
 	if !ok {
 		return &fail.ResponseError{
 			StatusCode: http.StatusBadRequest,
-			Message:    "apenas maiores de 16 anos podem se cadastrar",
+			Message:    "apenas maiores de 16 anos podem cadastrar-se nesta plataforma",
 		}
 	}
 
-	err := u.ValidateEmail()
+	err := u.validateFirstName()
 	if err != nil {
-		return err
+		errs = append(errs, err)
 	}
 
-	err = u.validatePassword()
+	err = u.ValidateLastName()
 	if err != nil {
-		return err
+		errs = append(errs, err)
 	}
 
-	err = u.validateNick()
-	if err != nil {
-		return err
-	}
 
-	err = u.validateFirstName()
-	if err != nil {
-		return err
+	if len(errs) > 0 {
+		var message string
+
+		for _, err := range errs {
+			message = fmt.Sprint("%s \n", err.Error())
+		}
+
+		return &fail.ResponseError{
+			StatusCode: http.StatusBadRequest,
+			Message:    message,
+		}
 	}
 
 	return nil
@@ -159,44 +118,17 @@ func CreateUser(bodyRequest []byte) *fail.ResponseError {
 		return err
 	}
 
-	pass, err := security.CreateHashAndSalt(u.Password)
-	if err != nil {
-		return err
-	}
 
-	countryCode, err := GetCountryDatabase(u.Country)
-	if err != nil {
-		return err
-	}
-
-	stateID, err := GetState(u.State, countryCode)
-	if err != nil {
-		return err
-	}
-
-	cityID, err := GetCityID(u.City, stateID)
-	if err != nil {
-		return err
-	}
-
-	contactID, err := CreateNewUsercontact(u.Email)
-	if err != nil {
-		return err
-	}
-
-	var user = entities.User{
+	var user = entitie.User{
 		UID:       uuid.NewString(),
-		Password:  pass,
-		CityID:    cityID,
-		Nick:      u.Nick,
 		FirstName: u.FirstName,
+		LastName: u.LastName,
 		BirthDate: u.BirthDate,
-		ContactID: contactID,
+		Gender: u.Gender,
 	}
 
 	repo, err := repository.NewUserRepository()
 	if err != nil {
-
 		slog.LogAttrs(
 			context.Background(),
 			slog.LevelError,
@@ -215,50 +147,6 @@ func CreateUser(bodyRequest []byte) *fail.ResponseError {
 	return nil
 }
 
-func SearchUsers() ([]byte, *fail.ResponseError) {
-
-	// adicionar lógica para ler query params
-
-	repo, err := repository.NewUserRepository()
-	if err != nil {
-		return nil, err
-	}
-
-	users, err := repo.SearchUsers()
-	if err != nil {
-		return nil, err
-	}
-
-	JSONData, e := json.Marshal(*users)
-	if e != nil {
-		// criar log aqui
-		return nil, fail.INTERNAL_SERVER_ERROR
-	}
-
-	return JSONData, nil
-}
-
-func SearchUser(UID string) ([]byte, *fail.ResponseError) {
-
-	repo, err := repository.NewUserRepository()
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := repo.SearchUserByID([]byte(UID))
-	if err != nil {
-		return nil, err
-	}
-
-	fmt.Println(user)
-
-	JSONData, e := json.Marshal(user)
-	if e != nil {
-		return nil, &fail.ResponseError{
-			StatusCode: http.StatusInternalServerError,
-			Message:    e.Error(),
-		}
-	}
-
-	return JSONData, nil
+func CreateUser2() *fail.ResponseError {
+return nil
 }

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cleitonSilvaViana/social-go/internal/entities"
+	"github.com/cleitonSilvaViana/social-go/internal/entitie"
 	"github.com/cleitonSilvaViana/social-go/internal/repository"
 	"github.com/cleitonSilvaViana/social-go/pkg/fail"
 )
@@ -17,15 +17,74 @@ type Country struct {
 	Name        string `name,required`
 }
 
+func (c *Country) validateNameCountry() *fail.ResponseError {
+	// realizar uma requisição http ao site que resgato infos sobre os países
+	// checar se o país com nome equiavalente ao campo Name da struct existe
+
+	return nil
+}
+
 type State struct {
 	// padronização ISO
 	Name string `json:"name,required"`
-	Country
+}
+
+func (s *State) validate() *fail.ResponseError {
+		s.Name = strings.Trim(s.Name, " ")
+
+	if s.Name == "" {
+		return &fail.ResponseError{
+			StatusCode: http.StatusBadRequest,
+			Message: "o nome do estado não pode estar vazio",
+		}
+	}
+
+	return nil
 }
 
 type City struct {
 	Name string `json:"city,required"`
+}
+
+func (c *City) validate() *fail.ResponseError {
+	c.Name = strings.Trim(c.Name, " ")
+
+	if c.Name == "" {
+		return &fail.ResponseError{
+			StatusCode: http.StatusBadRequest,
+			Message: "o nome do estado não pode estar vazio",
+		}
+	}
+
+	return nil
+}
+
+type Address struct {
+	Country
 	State
+	City
+}
+
+func (a *Address) ValidateState() *fail.ResponseError {
+	// verificar se o estado correspondente ao países celecionado existe
+
+	return nil
+}
+
+func (a *Address) ValidateCity() *fail.ResponseError {
+	// verificar se a cidade existe em determinado estado
+	
+	return nil
+}
+
+
+func (a *Address) Validate() *fail.ResponseError {
+	// var errs []error
+	
+	a.ValidateState()
+	a.ValidateCity()
+
+	return nil
 }
 
 // SearchCountry irá realizar realizar uma busca no banco de dados pelo país inserido em sue parãmetro.
@@ -141,7 +200,7 @@ func AddNewContryInDatabase(country string) (string, *fail.ResponseError) {
 		return "", err
 	}
 
-	code, err := repo.AddNewCountry(entities.Country{
+	code, err := repo.AddNewCountry(entitie.Country{
 		CCA3: newCountry.CountryCCA3,
 		Name: newCountry.Name,
 	})

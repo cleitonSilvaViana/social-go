@@ -3,10 +3,9 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"net/http"
 
 	"github.com/cleitonSilvaViana/social-go/internal/database"
-	"github.com/cleitonSilvaViana/social-go/internal/entities"
+	"github.com/cleitonSilvaViana/social-go/internal/entitie"
 	"github.com/cleitonSilvaViana/social-go/pkg/fail"
 )
 
@@ -28,11 +27,11 @@ func NewUserRepository() (*userRepository, *fail.ResponseError) {
 	return &userRepository{db}, nil
 }
 
-func (u *userRepository) CreateUser(user entities.User) *fail.ResponseError {
+func (u *userRepository) CreateUser(user entitie.User) *fail.ResponseError {
 
 	defer u.db.Close()
 
-	stmt, err := u.db.Prepare("INSERT INTO USER (uid, nick, first_name, birth_date, password, cityID, contactID) VALUES (?, ?, ?, ?, ?, ?, ?)")
+	stmt, err := u.db.Prepare("INSERT INTO USER (uid, first_name, last_name, gender, birth_date) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return fail.NewMySqlError(err)
 	}
@@ -40,7 +39,7 @@ func (u *userRepository) CreateUser(user entities.User) *fail.ResponseError {
 	defer stmt.Close()
 
 	_, err = stmt.Exec(
-		user.UID, user.Nick, user.FirstName, user.BirthDate, user.Password, user.CityID, user.ContactID,
+		user.UID, user.FirstName, user.LastName, user.Gender, user.BirthDate,
 	)
 	if err != nil {
 		return fail.NewMySqlError(err)
@@ -67,93 +66,4 @@ func (u *userRepository) DeleteUser(UID string) *fail.ResponseError {
 	}
 
 	return nil
-}
-
-func (u *userRepository) AlterPassword(password []byte, uid []byte) *fail.ResponseError {
-	defer u.db.Close()
-
-	stmt, err := u.db.Prepare("UPDATE user SET password = ? WHERE uid = ?")
-	if err != nil {
-		return fail.NewMySqlError(err)
-	}
-
-	defer stmt.Close()
-
-	_, err = stmt.Exec(password, uid)
-	if err != nil {
-		return fail.NewMySqlError(err)
-	}
-
-	return nil
-}
-
-func (u *userRepository) AlterNick(nick string, uid []byte) *fail.ResponseError {
-	defer u.db.Close()
-
-	stmt, err := u.db.Prepare("UPDATE user SET nick = ? WHERE uid = ?")
-	if err != nil {
-		return fail.NewMySqlError(err)
-	}
-
-	defer stmt.Close()
-
-	_, err = stmt.Exec(nick, uid)
-	if err != nil {
-		return fail.NewMySqlError(err)
-	}
-
-	return nil
-}
-
-func (u *userRepository) SearchUsers() (*[]user, *fail.ResponseError) {
-
-	defer u.db.Close()
-
-	rows, err := u.db.Query("SELECT first_name, nick FROM user")
-	if err != nil {
-		return nil, fail.NewMySqlError(err)
-	}
-
-	defer rows.Close()
-
-	var users []user
-
-	for rows.Next() {
-		var u user
-
-		err = rows.Scan(
-			&u.First_name,
-			&u.Nick,
-		)
-		if err != nil {
-			fmt.Println(err)
-			return nil, fail.NewMySqlError(err)
-		}
-
-		users = append(users, u)
-	}
-
-	return &users, nil
-}
-
-func (u *userRepository) SearchUserByID(UID []byte) (*entities.User, *fail.ResponseError) {
-	defer u.db.Close()
-
-	row := u.db.QueryRow("SELECT first_name, nick FROM user WHERE uid = ?", UID)
-
-	var user entities.User
-
-	err := row.Scan(&user)
-	if err == sql.ErrNoRows {
-		return nil, &fail.ResponseError{
-			StatusCode: http.StatusNotFound,
-			Message:    "User not found",
-		}
-	}
-
-	if err != nil {
-		return nil, fail.NewMySqlError(err)
-	}
-
-	return &user, nil
 }

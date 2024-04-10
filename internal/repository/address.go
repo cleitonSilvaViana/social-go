@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/cleitonSilvaViana/social-go/internal/database"
-	"github.com/cleitonSilvaViana/social-go/internal/entities"
+	"github.com/cleitonSilvaViana/social-go/internal/entitie"
 	"github.com/cleitonSilvaViana/social-go/pkg/fail"
 )
 
@@ -25,7 +25,7 @@ func (a *addressRepository) GetCountryCode(country string) (string, *fail.Respon
 
 	row := a.db.QueryRow("SELECT cca3, name FROM country WHERE name = ?", country)
 
-	var c entities.Country
+	var c entitie.Country
 
 	err := row.Scan(
 		&c.CCA3,
@@ -43,7 +43,7 @@ func (a *addressRepository) GetCountryCode(country string) (string, *fail.Respon
 	return c.CCA3, nil
 }
 
-func (a *addressRepository) AddNewCountry(country entities.Country) (string, *fail.ResponseError) {
+func (a *addressRepository) AddNewCountry(country entitie.Country) (string, *fail.ResponseError) {
 	defer a.db.Close()
 
 	stmt, err := a.db.Prepare("INSERT INTO country (cca3, name) VALUES (?, ?)")

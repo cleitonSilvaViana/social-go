@@ -1,4 +1,4 @@
-package entities
+package entitie
 
 type Country struct {
 	// cca3 is the ISO 3166-1 alpha-3, is a sistem of codes of tree characters used for represently countries.
